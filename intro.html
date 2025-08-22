@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Muddskip Way: Gantt Chart of Time & Opportunity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 2rem;
+            position: relative;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 1rem;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .input-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-item label {
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .input-item input {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            text-align: center;
+            width: 100px;
+            max-width: 100%;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .input-item button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            transition: background-color 0.2s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .input-item button:hover {
+            background-color: #2563eb;
+        }
+
+        .scenario-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .scenario-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            border: 2px solid #cbd5e1;
+            background-color: #f0f2f5;
+            color: #475569;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .scenario-button.active {
+            background-color: #10b981;
+            border-color: #059669;
+            color: white;
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+        }
+        .scenario-button:hover:not(.active) {
+            background-color: #e2e8f0;
+            border-color: #94a3b8;
+        }
+
+        /* ROI Box Styling */
+        .roi-box {
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.25rem;
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 250px;
+            z-index: 20;
+        }
+        .roi-box h3 {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: #d97706;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+        .roi-box ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .roi-box li {
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .roi-box li::before {
+            content: '✅';
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        /* Gantt Chart Specific Styling */
+        .gantt-chart {
+            display: grid;
+            grid-template-columns: 80px repeat(20, 1fr);
+            gap: 2px;
+            margin-top: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            background-color: #f8fafc;
+            overflow-x: auto;
+        }
+        .gantt-header {
+            font-weight: 600;
+            color: #475569;
+            text-align: center;
+            padding: 0.5rem 0;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #cbd5e1;
+            position: sticky;
+            top: 0;
+            background-color: #f8fafc;
+            z-index: 10;
+        }
+        .gantt-header.day-label {
+            border-left: 1px solid #e2e8f0;
+        }
+        .gantt-project-label {
+            font-weight: 600;
+            color: #475569;
+            padding: 0.5rem;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-right: 1px solid #e2e8f0;
+        }
+        .gantt-cell {
+            padding: 0.5rem 0.25rem;
+            text-align: center;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px dashed #e2e8f0;
+        }
+        .gantt-bar {
+            height: 100%;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .gantt-bar.original {
+            background-color: #3b82f6;
+        }
+        .gantt-bar.muddskip {
+            background-color: #6d28d9;
+        }
+        .gantt-bar.freed {
+            background-color: #d1d5db;
+            color: #4b5563;
+            border: 2px dashed #9ca3af;
+            font-style: italic;
+            box-shadow: none;
+        }
+        .gantt-bar.new-project {
+            background-color: #10b981;
+        }
+        .gantt-bar.work-life-balance {
+            background-color: #f97316;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .roi-box {
+                position: static;
+                width: 100%;
+                margin-bottom: 2rem;
+                padding: 1rem;
+            }
+            .container {
+                padding-top: 1rem;
+            }
+            .gantt-chart {
+                grid-template-columns: 60px repeat(20, 1fr);
+            }
+            .gantt-project-label {
+                font-size: 0.7rem;
+                padding: 0.3rem;
+            }
+            .gantt-header.day-label {
+                font-size: 0.7rem;
+                padding: 0.3rem 0;
+            }
+            .gantt-bar {
+                font-size: 0.65rem;
+                padding: 0.15rem;
+            }
+            .input-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            .input-item {
+                width: 100%;
+            }
+            .input-item input {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <div class="container">
+        <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-8">
+            <span class="text-emerald-600">The Muddskip Way:</span> More Money OR Better Work-Life Balance
+        </h1>
+
+        <p class="text-center text-gray-600 mb-10 text-lg">
+            Our groundbreaking <span class="font-bold text-emerald-600">Muddskip</span> additive, with its unique <span class="font-bold">wet on wet coats</span> feature, slashes project time by an incredible <span class="font-bold text-red-600">65%</span>. See how this efficiency transforms your business!
+        </p>
+
+        <!-- ROI Examples Box -->
+        <div class="roi-box">
+            <h3>Real-World ROI:</h3>
+            <ul>
+                <li>No Setup/Teardown between coats!</li>
+                <li>Significantly Less Drive Time</li>
+                <li>Fewer Callbacks (Quality Finish)</li>
+                <li>Reduced Material Waste</li>
+                <li>Faster Overall Project Turnover</li>
+                <li>Enhanced Team Morale & Retention</li>
+                <li>**Improved Crew Utilization & Productivity**</li>
+                <li>**Reduced Average Daily Business Costs**</li>
+            </ul>
+        </div>
+
+        <!-- Input Fields -->
+        <div class="input-group">
+            <div class="input-item">
+                <label for="numProjects">Number of Original Projects / Month:</label>
+                <input type="number" id="numProjects" value="5" min="1">
+            </div>
+            <div class="input-item">
+                <label for="projectDays">Days per Original Project:</label>
+                <input type="number" id="projectDays" value="4" min="1">
+            </div>
+            <div class="input-item">
+                <label for="dailyCost">Avg. Daily Business Cost ($):</label>
+                <input type="number" id="dailyCost" value="500" min="0">
+            </div>
+            <div class="input-item self-end">
+                <button onclick="updateGanttChart()">Calculate Impact</button>
+            </div>
+        </div>
+
+        <!-- Scenario Selector -->
+        <div class="scenario-selector">
+            <button id="moreMoneyBtn" class="scenario-button active" onclick="selectScenario('money')">
+                📈 More Money (New Jobs)
+            </button>
+            <button id="workLifeBtn" class="scenario-button" onclick="selectScenario('balance')">
+                🧘 Better Work-Life Balance
+            </button>
+        </div>
+
+        <!-- Legend -->
+        <div class="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-gray-700">
+            <div class="legend-item flex items-center">
+                <div class="legend-color w-4 h-4 rounded-md bg-blue-500 mr-2"></div>
+                Original Project
+            </div>
+            <div class="legend-item flex items-center">
+                <div class="legend-color w-4 h-4 rounded-md bg-purple-700 mr-2"></div>
+                Muddskip Project
+            </div>
+            <div class="legend-item flex items-center">
+                <div class="legend-color w-4 h-4 rounded-md bg-gray-400 border-2 border-dashed border-gray-500 mr-2"></div>
+                Time Saved (Freed Up)
+            </div>
+            <div class="legend-item flex items-center" id="legendSpecific">
+                <!-- Content changes based on scenario -->
+            </div>
+        </div>
+
+        <!-- Gantt Chart Sections -->
+        <div id="ganttCharts">
+            <!-- Charts will be dynamically inserted here by JavaScript -->
+        </div>
+
+        <script>
+            const totalWorkingDaysInMonth = 20;
+            const timeReductionPercentage = 0.65;
+            let currentScenario = 'money';
+
+            function selectScenario(scenario) {
+                currentScenario = scenario;
+                document.getElementById('moreMoneyBtn').classList.remove('active');
+                document.getElementById('workLifeBtn').classList.remove('active');
+                document.getElementById(scenario === 'money' ? 'moreMoneyBtn' : 'workLifeBtn').classList.add('active');
+                updateGanttChart();
+            }
+
+            function updateGanttChart() {
+                const numOriginalProjects = parseInt(document.getElementById('numProjects').value);
+                const originalProjectDuration = parseInt(document.getElementById('projectDays').value);
+                const averageDailyCost = parseInt(document.getElementById('dailyCost').value);
+
+                if (isNaN(numOriginalProjects) || numOriginalProjects < 1 ||
+                    isNaN(originalProjectDuration) || originalProjectDuration < 1 ||
+                    isNaN(averageDailyCost) || averageDailyCost < 0) {
+                    alert("Please enter valid positive numbers for projects, days, and daily cost.");
+                    return;
+                }
+
+                let muddskipProjectDuration = Math.ceil(originalProjectDuration * (1 - timeReductionPercentage));
+                if (muddskipProjectDuration === 0) muddskipProjectDuration = 1;
+
+                const totalOriginalDaysBooked = numOriginalProjects * originalProjectDuration;
+                const totalMuddskipDaysBooked = numOriginalProjects * muddskipProjectDuration;
+                const totalFreedDays = totalOriginalDaysBooked - totalMuddskipDaysBooked;
+                
+                // New calculation for cost savings
+                const costSavings = totalFreedDays * averageDailyCost;
+
+                const ganttChartsDiv = document.getElementById('ganttCharts');
+                ganttChartsDiv.innerHTML = '';
+
+                const legendSpecific = document.getElementById('legendSpecific');
+                if (currentScenario === 'money') {
+                    legendSpecific.innerHTML = `
+                        <div class="legend-color w-4 h-4 rounded-md bg-green-500 mr-2"></div>
+                        New Small Project
+                    `;
+                } else {
+                    legendSpecific.innerHTML = `
+                        <div class="legend-color w-4 h-4 rounded-md bg-orange-500 mr-2"></div>
+                        Time for Work-Life Balance
+                    `;
+                }
+
+                function generateDayHeaders() {
+                    let headers = `<div class="gantt-header">Project</div>`;
+                    for (let i = 1; i <= totalWorkingDaysInMonth; i++) {
+                        headers += `<div class="gantt-header day-label">${i}</div>`;
+                    }
+                    return headers;
+                }
+
+                // --- Phase 1: Original Schedule (Before Muddskip) ---
+                let originalChartHtml = `
+                    <div class="bg-blue-50 p-6 rounded-xl mb-8 shadow-inner">
+                        <h2 class="text-2xl font-semibold text-blue-800 mb-4">Phase 1: Original Schedule (No Muddskip)</h2>
+                        <p class="text-gray-700 mb-4">
+                            In a typical ${totalWorkingDaysInMonth}-day month, your company is fully booked with ${numOriginalProjects} standard projects, each requiring ${originalProjectDuration} day(s).
+                            <br><span class="font-semibold">Total Days Booked: ${totalOriginalDaysBooked}</span>
+                        </p>
+                        <div class="gantt-chart">
+                            ${generateDayHeaders()}
+                `;
+                for (let i = 0; i < numOriginalProjects; i++) {
+                    const startDay = i * originalProjectDuration;
+                    if (startDay < totalWorkingDaysInMonth) {
+                        originalChartHtml += `<div class="gantt-project-label">Project ${String.fromCharCode(65 + i)}</div>`;
+                        originalChartHtml += `<div class="gantt-cell col-span-${startDay}"></div>`;
+                        originalChartHtml += `<div class="gantt-bar original col-span-${originalProjectDuration}">Proj ${String.fromCharCode(65 + i)}</div>`;
+                        const remainingCells = totalWorkingDaysInMonth - (startDay + originalProjectDuration);
+                        if (remainingCells > 0) {
+                            originalChartHtml += `<div class="gantt-cell col-span-${remainingCells}"></div>`;
+                        }
+                    }
+                }
+                originalChartHtml += `
+                        </div>
+                        <p class="text-center text-gray-700 mt-4 font-semibold">Total Projects: ${numOriginalProjects}</p>
+                    </div>
+                `;
+                ganttChartsDiv.innerHTML += originalChartHtml;
+
+                // --- Phase 2: With Muddskip - Time Reduction ---
+                let muddskipTimeSavedHtml = `
+                    <div class="bg-purple-50 p-6 rounded-xl mb-8 shadow-inner">
+                        <h2 class="text-2xl font-semibold text-purple-800 mb-4">Phase 2: With Muddskip - 65% Time Reduction!</h2>
+                        <p class="text-gray-700 mb-4">
+                            Thanks to Muddskip's "wet on wet coats" and 65% time reduction, each ${originalProjectDuration}-day project now effectively takes only ${muddskipProjectDuration} day(s) to complete. This creates significant gaps in your schedule.
+                        </p>
+                        <div class="gantt-chart">
+                            ${generateDayHeaders()}
+                `;
+                for (let i = 0; i < numOriginalProjects; i++) {
+                    const startDay = i * muddskipProjectDuration;
+                    if (startDay < totalWorkingDaysInMonth) {
+                        muddskipTimeSavedHtml += `<div class="gantt-project-label">Project ${String.fromCharCode(65 + i)}'</div>`;
+                        muddskipTimeSavedHtml += `<div class="gantt-cell col-span-${startDay}"></div>`;
+                        muddskipTimeSavedHtml += `<div class="gantt-bar muddskip col-span-${muddskipProjectDuration}">Proj ${String.fromCharCode(65 + i)}'</div>`;
+                        const freedDaysForThisProject = originalProjectDuration - muddskipProjectDuration;
+                        if (freedDaysForThisProject > 0) {
+                            muddskipTimeSavedHtml += `<div class="gantt-bar freed col-span-${freedDaysForThisProject}">Freed</div>`;
+                        }
+                        const remainingCells = totalWorkingDaysInMonth - (startDay + muddskipProjectDuration + freedDaysForThisProject);
+                        if (remainingCells > 0) {
+                            muddskipTimeSavedHtml += `<div class="gantt-cell col-span-${remainingCells}"></div>`;
+                        }
+                    }
+                }
+                muddskipTimeSavedHtml += `
+                        </div>
+                        <p class="text-center text-gray-700 mt-4 font-semibold">Total Projects: ${numOriginalProjects} (completed faster)</p>
+                        <p class="text-center text-gray-700 mt-2 font-semibold text-green-700">Total Freed Time: ${totalFreedDays} Day(s)!</p>
+                        <div class="text-center bg-yellow-100 p-4 rounded-lg mt-4 shadow-md">
+                            <p class="text-lg font-bold text-yellow-800">
+                                This freed time represents a direct cost savings of <span class="text-green-700">$${costSavings.toLocaleString()}</span>!
+                            </p>
+                            <p class="text-sm text-gray-700 mt-2">
+                                (Based on your average daily business cost of $${averageDailyCost}.)
+                            </p>
+                        </div>
+                    </div>
+                `;
+                ganttChartsDiv.innerHTML += muddskipTimeSavedHtml;
+
+                // --- Phase 3: The Opportunity (Dynamic based on scenario) ---
+                let opportunityHtml = `
+                    <div class="bg-emerald-50 p-6 rounded-xl shadow-inner">
+                        <h2 class="text-2xl font-semibold text-emerald-800 mb-4">Phase 3: The Opportunity - The Muddskip Way!</h2>
+                `;
+
+                if (currentScenario === 'money') {
+                    const numNewSmallProjects = totalFreedDays;
+                    const totalProjectsWithMuddskip = numOriginalProjects + numNewSmallProjects;
+                    let profitIncreasePercentage = 0;
+                    if (numOriginalProjects > 0) {
+                        profitIncreasePercentage = ((totalProjectsWithMuddskip / numOriginalProjects) - 1) * 100;
+                    }
+
+                    opportunityHtml += `
+                        <p class="text-gray-700 mb-4">
+                            By choosing to fill the ${totalFreedDays} freed day(s) with new business, you can take on **${numNewSmallProjects} additional small project(s)** in the same month!
+                        </p>
+                        <div class="gantt-chart">
+                            ${generateDayHeaders()}
+                    `;
+                    let newProjectCounter = 1;
+                    let currentDay = 0;
+                    for (let i = 0; i < numOriginalProjects; i++) {
+                        const originalProjectName = String.fromCharCode(65 + i);
+                        opportunityHtml += `<div class="gantt-project-label">Proj ${originalProjectName}'</div>`;
+                        opportunityHtml += `<div class="gantt-cell col-span-${currentDay}"></div>`; // Fill empty space before this project starts
+                        opportunityHtml += `<div class="gantt-bar muddskip col-span-${muddskipProjectDuration}">Proj ${originalProjectName}'</div>`;
+                        currentDay += muddskipProjectDuration;
+
+                        for (let j = 0; j < originalProjectDuration - muddskipProjectDuration; j++) {
+                             if (currentDay < totalWorkingDaysInMonth) {
+                                opportunityHtml += `<div class="gantt-bar new-project col-span-1">New ${newProjectCounter++}</div>`;
+                                currentDay++;
+                            } else {
+                                break;
+                            }
+                        }
+                        if (currentDay >= totalWorkingDaysInMonth) break;
+                    }
+
+                    // Add remaining free time
+                    while(currentDay < totalWorkingDaysInMonth) {
+                        opportunityHtml += `<div class="gantt-project-label">New Proj</div>`;
+                        opportunityHtml += `<div class="gantt-cell col-span-${currentDay}"></div>`;
+                        opportunityHtml += `<div class="gantt-bar new-project col-span-1">New ${newProjectCounter++}</div>`;
+                        opportunityHtml += `<div class="gantt-cell col-span-${totalWorkingDaysInMonth - (currentDay+1)}"></div>`;
+                        currentDay++;
+                    }
+                    opportunityHtml += `
+                            </div>
+                            <div class="mt-8 text-center">
+                                <p class="text-xl font-bold text-gray-800 mb-4">
+                                    <span class="text-green-600">Total Projects: ${totalProjectsWithMuddskip}</span>
+                                </p>
+                                <div class="bg-yellow-100 p-4 rounded-lg inline-block shadow-md">
+                                    <p class="text-2xl font-bold text-yellow-800">
+                                        Potential Profit Increase: <span class="text-green-700">${profitIncreasePercentage.toFixed(0)}%</span>
+                                    </p>
+                                    <p class="text-sm text-gray-700 mt-2">
+                                        (Assuming each new small project contributes to profit, effectively increasing total output.)
+                                    </p>
+                                </div>
+                                <p class="text-lg text-gray-700 mt-4">
+                                    Muddskip empowers you to do more, earn more, and grow faster!
+                                </p>
+                            </div>
+                        `;
+                } else { // Work-Life Balance scenario
+                    const equivalentDaysOff = totalFreedDays;
+                    opportunityHtml += `
+                        <p class="text-gray-700 mb-4">
+                            By choosing to optimize for work-life balance, your team gains **${equivalentDaysOff} collective day(s) of freed time** per month! This can be used for training, personal development, or simply more time off.
+                        </p>
+                        <div class="gantt-chart">
+                            ${generateDayHeaders()}
+                    `;
+                    let currentDay = 0;
+                    for (let i = 0; i < numOriginalProjects; i++) {
+                        const originalProjectName = String.fromCharCode(65 + i);
+                        opportunityHtml += `<div class="gantt-project-label">Proj ${originalProjectName}'</div>`;
+                        opportunityHtml += `<div class="gantt-cell col-span-${currentDay}"></div>`;
+                        opportunityHtml += `<div class="gantt-bar muddskip col-span-${muddskipProjectDuration}">Proj ${originalProjectName}'</div>`;
+                        currentDay += muddskipProjectDuration;
+
+                        for (let j = 0; j < originalProjectDuration - muddskipProjectDuration; j++) {
+                             if (currentDay < totalWorkingDaysInMonth) {
+                                opportunityHtml += `<div class="gantt-bar work-life-balance col-span-1">Time for You!</div>`;
+                                currentDay++;
+                            } else {
+                                break;
+                            }
+                        }
+                         if (currentDay >= totalWorkingDaysInMonth) break;
+                    }
+                    opportunityHtml += `
+                            </div>
+                            <div class="mt-8 text-center">
+                                <p class="text-xl font-bold text-gray-800 mb-4">
+                                    <span class="text-orange-600">Total Freed Time: ${equivalentDaysOff} Day(s)</span> for Your Team!
+                                </p>
+                                <div class="bg-yellow-100 p-4 rounded-lg inline-block shadow-md">
+                                    <p class="text-xl font-bold text-yellow-800">
+                                        Hidden Cost Savings: <span class="text-green-700">$${costSavings.toLocaleString()}</span>
+                                    </p>
+                                    <p class="text-sm text-gray-700 mt-2">
+                                        (Even when not booking new jobs, this is the cost you no longer incur!)
+                                    </p>
+                                </div>
+                                <p class="text-lg text-gray-700 mt-4">
+                                    Imagine the boost in morale, reduced burnout, and increased long-term productivity. Muddskip helps you build a sustainable and happier workforce!
+                                </p>
+                            </div>
+                        `;
+                }
+                opportunityHtml += `</div>`;
+                ganttChartsDiv.innerHTML += opportunityHtml;
+            }
+
+            window.onload = () => {
+                selectScenario('money');
+            };
+        </script>
+    </div>
+</body>
+</html>
