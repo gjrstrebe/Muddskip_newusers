@@ -24,119 +24,12 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             padding: 2rem;
-            position: relative;
-        }
-        .input-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
-            background-color: #f8fafc;
-            border-radius: 1rem;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .input-item {
             display: flex;
             flex-direction: column;
-            align-items: center;
-        }
-        .input-item label {
-            font-weight: 600;
-            color: #475569;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        .input-item input {
-            padding: 0.6rem 0.8rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 0.75rem;
-            font-size: 1rem;
-            text-align: center;
-            width: 100px;
-            max-width: 100%;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .input-item button {
-            background-color: #3b82f6;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            transition: background-color 0.2s ease-in-out;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .input-item button:hover {
-            background-color: #2563eb;
+            gap: 2rem;
         }
 
-        .scenario-selector {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .scenario-button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            border: 2px solid #cbd5e1;
-            background-color: #f0f2f5;
-            color: #475569;
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-        }
-        .scenario-button.active {
-            background-color: #10b981;
-            border-color: #059669;
-            color: white;
-            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-        }
-        .scenario-button:hover:not(.active) {
-            background-color: #e2e8f0;
-            border-color: #94a3b8;
-        }
-
-        /* ROI Box Styling */
-        .roi-box {
-            background-color: #fffbeb;
-            border: 1px solid #fde68a;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            padding: 1.25rem;
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            width: 250px;
-            z-index: 20;
-        }
-        .roi-box h3 {
-            font-weight: 700;
-            font-size: 1.125rem;
-            color: #d97706;
-            margin-bottom: 0.75rem;
-            text-align: center;
-        }
-        .roi-box ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .roi-box li {
-            font-size: 0.9rem;
-            color: #4b5563;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: flex-start;
-        }
-        .roi-box li::before {
-            content: '✅';
-            margin-right: 0.5rem;
-            font-size: 1rem;
-            line-height: 1;
-        }
-
-        /* Gantt Chart Specific Styling */
+        /* Gantt Chart Specific Styles */
         .gantt-chart {
             display: grid;
             grid-template-columns: 80px repeat(20, 1fr);
@@ -148,128 +41,87 @@
             background-color: #f8fafc;
             overflow-x: auto;
         }
-        .gantt-header {
-            font-weight: 600;
-            color: #475569;
-            text-align: center;
-            padding: 0.5rem 0;
-            font-size: 0.875rem;
-            border-bottom: 1px solid #cbd5e1;
-            position: sticky;
-            top: 0;
-            background-color: #f8fafc;
-            z-index: 10;
+        .gantt-header { font-weight: 600; color: #475569; text-align: center; padding: 0.5rem 0; font-size: 0.875rem; border-bottom: 1px solid #cbd5e1; position: sticky; top: 0; background-color: #f8fafc; z-index: 10; }
+        .gantt-header.day-label { border-left: 1px solid #e2e8f0; }
+        .gantt-project-label { font-weight: 600; color: #475569; padding: 0.5rem; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: 1px solid #e2e8f0; }
+        .gantt-cell { padding: 0.5rem 0.25rem; text-align: center; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; border-left: 1px dashed #e2e8f0; }
+        .gantt-bar { height: 100%; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.75rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); padding: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .gantt-bar.original { background-color: #3b82f6; }
+        .gantt-bar.muddskip { background-color: #6d28d9; }
+        .gantt-bar.freed { background-color: #d1d5db; color: #4b5563; border: 2px dashed #9ca3af; font-style: italic; box-shadow: none; }
+        .gantt-bar.new-project { background-color: #10b981; }
+        .gantt-bar.work-life-balance { background-color: #f97316; }
+        
+        /* New Layout for Responsive Design */
+        .roi-box {
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.25rem;
         }
-        .gantt-header.day-label {
-            border-left: 1px solid #e2e8f0;
+        .roi-box h3 { font-weight: 700; font-size: 1.125rem; color: #d97706; margin-bottom: 0.75rem; text-align: center; }
+        .roi-list {
+            list-style-type: none;
+            padding-left: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr)); /* Two columns for wide screens */
+            gap: 0.5rem 1.5rem;
         }
-        .gantt-project-label {
-            font-weight: 600;
-            color: #475569;
-            padding: 0.5rem;
-            text-align: left;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            border-right: 1px solid #e2e8f0;
-        }
-        .gantt-cell {
-            padding: 0.5rem 0.25rem;
-            text-align: center;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-left: 1px dashed #e2e8f0;
-        }
-        .gantt-bar {
-            height: 100%;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.75rem;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-            padding: 0.25rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .gantt-bar.original {
-            background-color: #3b82f6;
-        }
-        .gantt-bar.muddskip {
-            background-color: #6d28d9;
-        }
-        .gantt-bar.freed {
-            background-color: #d1d5db;
+        .roi-list li {
+            font-size: 0.9rem;
             color: #4b5563;
-            border: 2px dashed #9ca3af;
-            font-style: italic;
-            box-shadow: none;
+            display: flex;
+            align-items: flex-start;
         }
-        .gantt-bar.new-project {
-            background-color: #10b981;
-        }
-        .gantt-bar.work-life-balance {
-            background-color: #f97316;
+        .roi-list li::before {
+            content: '✅';
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            line-height: 1;
         }
 
-        /* Responsive adjustments */
+        /* Input and Scenario Selectors */
+        .input-group { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; padding: 1rem; background-color: #f8fafc; border-radius: 1rem; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
+        .input-item { display: flex; flex-direction: column; align-items: center; }
+        .input-item label { font-weight: 600; color: #475569; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .input-item input { padding: 0.6rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 0.75rem; font-size: 1rem; text-align: center; width: 100px; max-width: 100%; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+        .input-item button { background-color: #3b82f6; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 700; transition: background-color 0.2s ease-in-out; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .input-item button:hover { background-color: #2563eb; }
+        .scenario-selector { display: flex; justify-content: center; gap: 1rem; }
+        .scenario-button { padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 700; border: 2px solid #cbd5e1; background-color: #f0f2f5; color: #475569; transition: all 0.2s ease-in-out; cursor: pointer; }
+        .scenario-button.active { background-color: #10b981; border-color: #059669; color: white; box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3); }
+        .scenario-button:hover:not(.active) { background-color: #e2e8f0; border-color: #94a3b8; }
+
         @media (max-width: 768px) {
-            .roi-box {
-                position: static;
-                width: 100%;
-                margin-bottom: 2rem;
-                padding: 1rem;
+             .roi-list {
+                grid-template-columns: repeat(1, minmax(0, 1fr)); /* One column for small screens */
             }
-            .container {
-                padding-top: 1rem;
-            }
-            .gantt-chart {
-                grid-template-columns: 60px repeat(20, 1fr);
-            }
-            .gantt-project-label {
-                font-size: 0.7rem;
-                padding: 0.3rem;
-            }
-            .gantt-header.day-label {
-                font-size: 0.7rem;
-                padding: 0.3rem 0;
-            }
-            .gantt-bar {
-                font-size: 0.65rem;
-                padding: 0.15rem;
-            }
-            .input-group {
-                flex-direction: column;
-                align-items: center;
-            }
-            .input-item {
-                width: 100%;
-            }
-            .input-item input {
-                width: 80%;
-            }
+            .container { padding: 1rem; }
+            .gantt-chart { grid-template-columns: 60px repeat(20, 1fr); }
+            .gantt-project-label { font-size: 0.7rem; padding: 0.3rem; }
+            .gantt-header.day-label { font-size: 0.7rem; padding: 0.3rem 0; }
+            .gantt-bar { font-size: 0.65rem; padding: 0.15rem; }
+            .input-group { flex-direction: column; align-items: center; }
+            .input-item { width: 100%; }
+            .input-item input { width: 80%; }
         }
     </style>
 </head>
 <body class="p-4 sm:p-8">
     <div class="container">
-        <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-8">
+        <!-- Main Title and Intro Text -->
+        <h1 class="text-3xl sm:text-4xl font-bold text-center text-gray-800">
             <span class="text-emerald-600">The Muddskip Way:</span> More Money OR Better Work-Life Balance
         </h1>
-
-        <p class="text-center text-gray-600 mb-10 text-lg">
+        <p class="text-center text-gray-600 text-lg">
             Our groundbreaking <span class="font-bold text-emerald-600">Muddskip</span> additive, with its unique <span class="font-bold">wet on wet coats</span> feature, slashes project time by an incredible <span class="font-bold text-red-600">65%</span>. See how this efficiency transforms your business!
         </p>
 
-        <!-- ROI Examples Box -->
+        <!-- NEWLY RE-POSITIONED ROI Box with Two Columns -->
         <div class="roi-box">
             <h3>Real-World ROI:</h3>
-            <ul>
+            <ul class="roi-list">
                 <li>No Setup/Teardown between coats!</li>
                 <li>Significantly Less Drive Time</li>
                 <li>Fewer Callbacks (Quality Finish)</li>
@@ -311,7 +163,7 @@
         </div>
 
         <!-- Legend -->
-        <div class="mb-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-gray-700">
+        <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-gray-700">
             <div class="legend-item flex items-center">
                 <div class="legend-color w-4 h-4 rounded-md bg-blue-500 mr-2"></div>
                 Original Project
@@ -366,7 +218,6 @@
                 const totalMuddskipDaysBooked = numOriginalProjects * muddskipProjectDuration;
                 const totalFreedDays = totalOriginalDaysBooked - totalMuddskipDaysBooked;
                 
-                // New calculation for cost savings
                 const costSavings = totalFreedDays * averageDailyCost;
 
                 const ganttChartsDiv = document.getElementById('ganttCharts');
@@ -393,7 +244,6 @@
                     return headers;
                 }
 
-                // --- Phase 1: Original Schedule (Before Muddskip) ---
                 let originalChartHtml = `
                     <div class="bg-blue-50 p-6 rounded-xl mb-8 shadow-inner">
                         <h2 class="text-2xl font-semibold text-blue-800 mb-4">Phase 1: Original Schedule (No Muddskip)</h2>
@@ -423,7 +273,6 @@
                 `;
                 ganttChartsDiv.innerHTML += originalChartHtml;
 
-                // --- Phase 2: With Muddskip - Time Reduction ---
                 let muddskipTimeSavedHtml = `
                     <div class="bg-purple-50 p-6 rounded-xl mb-8 shadow-inner">
                         <h2 class="text-2xl font-semibold text-purple-800 mb-4">Phase 2: With Muddskip - 65% Time Reduction!</h2>
@@ -465,7 +314,6 @@
                 `;
                 ganttChartsDiv.innerHTML += muddskipTimeSavedHtml;
 
-                // --- Phase 3: The Opportunity (Dynamic based on scenario) ---
                 let opportunityHtml = `
                     <div class="bg-emerald-50 p-6 rounded-xl shadow-inner">
                         <h2 class="text-2xl font-semibold text-emerald-800 mb-4">Phase 3: The Opportunity - The Muddskip Way!</h2>
@@ -491,7 +339,7 @@
                     for (let i = 0; i < numOriginalProjects; i++) {
                         const originalProjectName = String.fromCharCode(65 + i);
                         opportunityHtml += `<div class="gantt-project-label">Proj ${originalProjectName}'</div>`;
-                        opportunityHtml += `<div class="gantt-cell col-span-${currentDay}"></div>`; // Fill empty space before this project starts
+                        opportunityHtml += `<div class="gantt-cell col-span-${currentDay}"></div>`;
                         opportunityHtml += `<div class="gantt-bar muddskip col-span-${muddskipProjectDuration}">Proj ${originalProjectName}'</div>`;
                         currentDay += muddskipProjectDuration;
 
@@ -506,7 +354,6 @@
                         if (currentDay >= totalWorkingDaysInMonth) break;
                     }
 
-                    // Add remaining free time
                     while(currentDay < totalWorkingDaysInMonth) {
                         opportunityHtml += `<div class="gantt-project-label">New Proj</div>`;
                         opportunityHtml += `<div class="gantt-cell col-span-${currentDay}"></div>`;
@@ -533,7 +380,7 @@
                                 </p>
                             </div>
                         `;
-                } else { // Work-Life Balance scenario
+                } else {
                     const equivalentDaysOff = totalFreedDays;
                     opportunityHtml += `
                         <p class="text-gray-700 mb-4">
